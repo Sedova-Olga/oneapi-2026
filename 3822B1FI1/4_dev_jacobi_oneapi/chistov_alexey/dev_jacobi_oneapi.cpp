@@ -27,17 +27,20 @@ std::vector<float> JacobiDevONEAPI(
     queue.memcpy(d_A, a.data(), sizeof(float) * n * n);
     queue.memcpy(d_B, b.data(), sizeof(float) * n);
     queue.memcpy(d_invD, inv_diag.data(), sizeof(float) * n);
-    queue.fill(d_x, 0.0f, n).wait();
+    queue.fill(d_x, 0.0f, n);
 
     const size_t wg_size = 64;
     const size_t global_size =
         ((n + wg_size - 1) / wg_size) * wg_size;
 
     const int CHECK_INTERVAL = 8;
+    bool converged = false;
 
     std::vector<float> x_host(n);
+    std::vector<float> x_prev(n, 0.0f);
 
-    for (int iter = 0; iter < ITERATIONS; ++iter) {
+    for (int iter = 0; iter < ITERATIONS && !converged; ++iter) {
+
         queue.parallel_for(
             sycl::nd_range<1>(global_size, wg_size),
             [=](sycl::nd_item<1> item) {
@@ -58,8 +61,6 @@ std::vector<float> JacobiDevONEAPI(
                 d_x_new[i] = d_invD[i] * (d_B[i] - sum);
             });
 
-        queue.wait();
-
         if ((iter + 1) % CHECK_INTERVAL == 0) {
 
             queue.memcpy(x_host.data(), d_x_new,
@@ -68,14 +69,16 @@ std::vector<float> JacobiDevONEAPI(
             float norm_sq = 0.0f;
 
             for (int i = 0; i < n; ++i) {
-                float diff = x_host[i];
+                float diff = x_host[i] - x_prev[i];
                 norm_sq += diff * diff;
             }
 
             if (norm_sq < accuracy_sq) {
-                std::swap(d_x, d_x_new);
+                converged = true;
                 break;
             }
+
+            x_prev = x_host;
         }
 
         std::swap(d_x, d_x_new);
