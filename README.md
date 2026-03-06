@@ -535,6 +535,7 @@ std::vector<float> JacobiKokkos(
 |3822B1FI1|chistov_alexey|0.1641|1|
 |**REF**|**REF**|**0.2633**|**-**|
 |3822B1FI1|beskhmelnova_kseniya|0.3483|2|
+|3822B1FI3|kolodkin_grigorii|TEST FAILED|-|
 
 ## 6_block_gemm_oneapi (3072 elements)
 |Group|Name|Result|Rank|
