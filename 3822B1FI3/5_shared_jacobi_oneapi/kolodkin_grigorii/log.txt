@@ -1,1 +1,2 @@
-Incorrect results, test input_128.bin, difference 62.874904172076015
+terminate called after throwing an instance of 'sycl::_V1::exception'
+  what():  Local work-group size {256, 1, 1} is greater than global range size {128, 1, 1}. Non-uniform work-groups are not allowed by default. Underlying OpenCL 2.x implementation supports this feature and to enable it, build device program with -cl-std=CL2.0
