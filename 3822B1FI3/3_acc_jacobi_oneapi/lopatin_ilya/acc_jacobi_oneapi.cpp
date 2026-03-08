@@ -1,4 +1,4 @@
-#include "jacobi_acc_oneapi.h"
+#include "acc_jacobi_oneapi.h"
 
 #include <algorithm>
 #include <buffer.hpp>
