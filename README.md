@@ -538,7 +538,7 @@ std::vector<float> JacobiKokkos(
 |**REF**|**REF**|**0.2633**|**-**|
 |3822B1FI1|solovev_alexey|0.3317|3|
 |3822B1FI1|beskhmelnova_kseniya|0.3483|2|
-|3822B1FI3|kolodkin_grigorii|RUN FAILED|-|
+|3822B1FI3|kolodkin_grigorii|0.4017|1|
 
 ## 6_block_gemm_oneapi (3072 elements)
 |Group|Name|Result|Rank|
@@ -590,7 +590,7 @@ Passed: 2
 |Group|Name|Passed|Score|
 |-----|----|------|-----|
 |3822B1FI3|frolova_elizaveta|3/9|185|
-|3822B1FI3|kolodkin_grigorii|6/9|378|
+|3822B1FI3|kolodkin_grigorii|7/9|442|
 |3822B1FI3|lopatin_ilya|2/9|125|
 |3822B1FI3|sozonov_ilya|1/9|60|
 
