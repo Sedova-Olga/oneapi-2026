@@ -1,0 +1,49 @@
+In file included from /home/crazyproger/sandbox/oneapi-2026/3822B1FI1/2_integral_oneapi/shulpin_ilya/integral_oneapi.cpp:1:
+In file included from /home/crazyproger/sandbox/oneapi-2026/3822B1FI1/2_integral_oneapi/shulpin_ilya/integral_oneapi.h:4:
+In file included from /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/stl_wrappers/cmath:20:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/cmath:1935:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/specfun.h:45:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_algobase.h:64:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_pair.h:59:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/move.h:57:
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/type_traits:2579:44: error: no type named 'type' in 'std::enable_if<false>'; 'enable_if' cannot be used to disable this declaration
+ 2579 |     using enable_if_t = typename enable_if<_Cond, _Tp>::type;
+      |                                            ^~~~~
+/opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/buffer.hpp:171:29: note: in instantiation of template type alias 'enable_if_t' requested here
+  171 |               typename std::enable_if_t<(dimensions > 0) && (dimensions <= 3)>>
+      |                             ^
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/2_integral_oneapi/shulpin_ilya/integral_oneapi.cpp:14:15: note: in instantiation of default argument for 'buffer<float, 0, buffer_allocator<std::remove_const_t<float>>>' required here
+   14 |         sycl::buffer<float, 0> sum_buf{&result, sycl::range<0>{}};
+      |               ^~~~~~~~~~~~~~~~
+In file included from /home/crazyproger/sandbox/oneapi-2026/3822B1FI1/2_integral_oneapi/shulpin_ilya/integral_oneapi.cpp:1:
+In file included from /home/crazyproger/sandbox/oneapi-2026/3822B1FI1/2_integral_oneapi/shulpin_ilya/integral_oneapi.h:5:
+In file included from /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/sycl.hpp:25:
+In file included from /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/detail/core.hpp:21:
+In file included from /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/accessor.hpp:13:
+In file included from /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/buffer.hpp:13:
+/opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/detail/array.hpp:37:17: error: static assertion failed due to requirement '0 >= 1': Array cannot be 0-dimensional.
+   37 |   static_assert(dimensions >= 1, "Array cannot be 0-dimensional.");
+      |                 ^~~~~~~~~~~~~~~
+/opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/range.hpp:26:52: note: in instantiation of template class 'sycl::detail::array<0>' requested here
+   26 | template <int Dimensions = 1> class range : public detail::array<Dimensions> {
+      |                                                    ^
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/2_integral_oneapi/shulpin_ilya/integral_oneapi.cpp:14:49: note: in instantiation of template class 'sycl::range<0>' requested here
+   14 |         sycl::buffer<float, 0> sum_buf{&result, sycl::range<0>{}};
+      |                                                 ^
+In file included from /home/crazyproger/sandbox/oneapi-2026/3822B1FI1/2_integral_oneapi/shulpin_ilya/integral_oneapi.cpp:1:
+In file included from /home/crazyproger/sandbox/oneapi-2026/3822B1FI1/2_integral_oneapi/shulpin_ilya/integral_oneapi.h:5:
+In file included from /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/sycl.hpp:25:
+In file included from /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/detail/core.hpp:21:
+In file included from /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/accessor.hpp:13:
+In file included from /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/buffer.hpp:25:
+In file included from /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/id.hpp:16:
+/opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/range.hpp:31:17: error: static assertion failed due to requirement '0 >= 1': range can only be 1, 2, or 3 Dimensional.
+   31 |   static_assert(Dimensions >= 1 && Dimensions <= 3,
+      |                 ^~~~~~~~~~~~~~~
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/2_integral_oneapi/shulpin_ilya/integral_oneapi.cpp:14:49: note: in instantiation of template class 'sycl::range<0>' requested here
+   14 |         sycl::buffer<float, 0> sum_buf{&result, sycl::range<0>{}};
+      |                                                 ^
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/2_integral_oneapi/shulpin_ilya/integral_oneapi.cpp:19:15: error: no member named 'parallel_reduce' in 'sycl::handler'
+   19 |             h.parallel_reduce(
+      |             ~ ^
+4 errors generated.
