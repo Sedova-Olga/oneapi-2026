@@ -2,53 +2,41 @@
 #include <oneapi/mkl.hpp>
 
 std::vector<float> GemmMklONEAPI(
-    const std::vector<float>& a,
-    const std::vector<float>& b,
+    const std::vector<float>& left,
+    const std::vector<float>& right,
     size_t size,
     sycl::device device) {
 
-    const size_t N = size;
+    sycl::queue exec_queue(device);
 
-    sycl::queue q(device);
+    const size_t dim = size;
+    const float scaleA = 1.0f;
+    const float scaleB = 0.0f;
 
-    float* A = sycl::malloc_shared<float>(N * N, q);
-    float* B = sycl::malloc_shared<float>(N * N, q);
-    float* C = sycl::malloc_shared<float>(N * N, q);
+    std::vector<float> output(dim * dim, 0.0f);
 
-    for (size_t i = 0; i < N * N; ++i) {
-        A[i] = a[i];
-        B[i] = b[i];
-        C[i] = 0.0f;
-    }
+    sycl::buffer<float> buf_left(left.data(), sycl::range<1>(left.size()));
+    sycl::buffer<float> buf_right(right.data(), sycl::range<1>(right.size()));
+    sycl::buffer<float> buf_out(output.data(), sycl::range<1>(output.size()));
 
-    const float alpha = 1.0f;
-    const float beta = 0.0f;
+    oneapi::mkl::blas::row_major::gemm(
+        exec_queue,
+        oneapi::mkl::transpose::nontrans,
+        oneapi::mkl::transpose::nontrans,
+        dim,
+        dim,
+        dim,
+        scaleA,
+        buf_left,
+        dim,
+        buf_right,
+        dim,
+        scaleB,
+        buf_out,
+        dim
+    );
 
-    oneapi::mkl::blas::column_major::gemm(
-        q,
-        oneapi::mkl::transpose::trans,
-        oneapi::mkl::transpose::trans,
-        N,
-        N,
-        N,
-        alpha,
-        A,
-        N,
-        B,
-        N,
-        beta,
-        C,
-        N
-    ).wait();
+    exec_queue.wait();
 
-    std::vector<float> result(N * N);
-
-    for (size_t i = 0; i < N * N; ++i)
-        result[i] = C[i];
-
-    sycl::free(A, q);
-    sycl::free(B, q);
-    sycl::free(C, q);
-
-    return result;
+    return output;
 }
