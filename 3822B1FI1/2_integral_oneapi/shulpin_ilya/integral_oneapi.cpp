@@ -1,7 +1,9 @@
 #include "integral_oneapi.h"
 
 float IntegralONEAPI(float start, float end, int count, sycl::device device) {
-    if (count <= 0) return 0.0f;
+    if (count <= 0) {
+        return 0.0f;
+    }
 
     const float dx = (end - start) / static_cast<float>(count);
     const float dy = dx;
@@ -11,26 +13,32 @@ float IntegralONEAPI(float start, float end, int count, sycl::device device) {
     try {
         sycl::queue q{device};
 
-        q.submit([&](sycl::handler& h) {
-            auto sum_red = sycl::reduction(result, sycl::plus<float>());
+        {
+            sycl::buffer<float> total_buf{&result, sycl::range<1>{1}};
 
-            h.parallel_for(
-                sycl::range<2>(count, count),
-                sum_red,
-                [=](sycl::id<2> idx, auto& sum) {
-                    const int i = idx[1];
-                    const int j = idx[0];
+            q.submit([&](sycl::handler& h) {
+                auto red = sycl::reduction(total_buf, h, sycl::plus<float>());
 
-                    const float x_mid = start + (static_cast<float>(i) + 0.5f) * dx;
-                    const float y_mid = start + (static_cast<float>(j) + 0.5f) * dy;
+                h.parallel_for(
+                    sycl::range<2>(static_cast<size_t>(count), static_cast<size_t>(count)),
+                    red,
+                    [=](sycl::id<2> idx, auto& partial_sum) {
+                        const size_t ix = idx[1];
+                        const size_t iy = idx[0];
 
-                    sum += sycl::sin(x_mid) * sycl::cos(y_mid) * dx * dy;
-                });
-        }).wait();
+                        const float x_mid = start + (static_cast<float>(ix) + 0.5f) * dx;
+                        const float y_mid = start + (static_cast<float>(iy) + 0.5f) * dy;
+
+                        const float f_mid = sycl::sin(x_mid) * sycl::cos(y_mid);
+
+                        partial_sum += f_mid * dx * dy;
+                    });
+            }).wait();
+        }
+
+        return result;
     }
     catch (sycl::exception const& e) {
         return 0.0f;
     }
-
-    return result;
 }
