@@ -31,7 +31,9 @@ std::vector<float> GemmMklONEAPI(
             B_buf, size,
             0.0f,
             C_buf, size
-        ).wait_and_throw();
+        );
+
+        q.wait();
 
         return c;
 
