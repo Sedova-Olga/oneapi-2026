@@ -43,9 +43,10 @@ std::vector<float> JacobiSharedONEAPI(
         {
             *max_diff_ptr = 0.0f;
 
+            sycl::buffer<float, 1> diff_buf{&max_diff, sycl::range<1>{1}};
             q.submit([&](sycl::handler& h)
             {
-                auto red = sycl::reduction(max_diff_ptr, h, sycl::maximum<float>());
+                auto red = sycl::reduction(diff_buf, h, sycl::maximum<float>());
 
                 h.parallel_for(
                     sycl::range<1>{n},
