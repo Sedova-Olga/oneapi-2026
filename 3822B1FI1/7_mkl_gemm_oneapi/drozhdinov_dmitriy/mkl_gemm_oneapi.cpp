@@ -1,5 +1,4 @@
 #include "mkl_gemm_oneapi.h"
-#include <buffer.hpp>
 #include <oneapi/mkl.hpp>
 
 std::vector<float> GemmMklONEAPI(const std::vector<float> &a,
