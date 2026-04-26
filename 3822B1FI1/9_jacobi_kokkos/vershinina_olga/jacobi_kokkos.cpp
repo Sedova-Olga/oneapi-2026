@@ -29,9 +29,8 @@ std::vector<float> JacobiKokkos(
     Kokkos::deep_copy(rhs, rhs_h);
     Kokkos::deep_copy(current, 0.0f);
 
-    float max_diff = 0.0f;
-
     for (int iteration = 0; iteration < ITERATIONS; ++iteration) {
+        float max_diff = 0.0f;
         Kokkos::parallel_reduce(
             "JacobiStep", dim,
             KOKKOS_LAMBDA(const int row, float& local_max) {
@@ -50,10 +49,10 @@ std::vector<float> JacobiKokkos(
         },
             Kokkos::Max<float>(max_diff)
             );
+        std::swap(current, next);
 
         if (max_diff < accuracy) break;
 
-        std::swap(current, next);
     }
 
     std::vector<float> solution(dim);
