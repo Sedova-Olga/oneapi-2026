@@ -20,41 +20,32 @@ std::vector<float> JacobiSharedONEAPI(
     std::fill(s_x_cur, s_x_cur + n, 0.0f);
     std::fill(s_x_nxt, s_x_nxt + n, 0.0f);
 
-    *s_diff = 1.0f;
-
     float* cur_ptr = s_x_cur;
     float* nxt_ptr = s_x_nxt;
 
     for (int iter = 0; iter < ITERATIONS; ++iter) {
-        queue.parallel_for(sycl::range<1>(n), [=](sycl::item<1> item) {
-            size_t i = item[0];
-            float sum = 0.0f;
-            for (size_t j = 0; j < n; ++j) {
-                if (j != i) {
-                    sum += s_a[i * n + j] * cur_ptr[j];
+        *s_diff = 0.0f;
+        queue.submit([&](sycl::handler& h) {
+            auto red = sycl::reduction(s_diff, sycl::maximum<float>());
+
+            h.parallel_for(sycl::range<1>(n), red, [=](sycl::id<1> idx, auto& max_val) {
+                size_t i = idx[0];
+                float sum = 0.0f;
+                for (size_t j = 0; j < n; ++j) {
+                    if (j != i) {
+                        sum += s_a[i * n + j] * cur_ptr[j];
+                    }
                 }
-            }
-            nxt_ptr[i] = (s_b[i] - sum) / s_a[i * n + i];
-            });
+                nxt_ptr[i] = (s_b[i] - sum) / s_a[i * n + i];
+                max_val.combine(sycl::fabs(nxt_ptr[i] - cur_ptr[i]));
+                });
+            }).wait();
 
-        queue.single_task([=]() {
-            float max_diff = 0.0f;
-            for (size_t i = 0; i < n; ++i) {
-                float d = sycl::fabs(nxt_ptr[i] - cur_ptr[i]);
-                if (d > max_diff) max_diff = d;
+            if (*s_diff < accuracy) {
+                std::swap(cur_ptr, nxt_ptr);
+                break;
             }
-            s_diff[0] = max_diff;
-            });
-
-        
-        queue.wait();
-        
-        if (s_diff[0] < accuracy) {
             std::swap(cur_ptr, nxt_ptr);
-            break;
-        }
-
-        std::swap(cur_ptr, nxt_ptr);
     }
 
     std::vector<float> result(n);
